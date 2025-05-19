@@ -48,8 +48,8 @@ public class CircularLinkedList
             return 0;
         }
         int length = 1;
-        ListNode current = head.getNext();
-        while (current != head)
+        ListNode current = head;
+        while (current != tail)
         {
             length++;
             current = current.getNext();
@@ -130,6 +130,58 @@ public class CircularLinkedList
     }
 
     /**
+     * Deletes the last node in the list.
+     * Time Complexity: O(n)
+     * 
+     * Base cases:
+     * - Empty list: prints message and returns
+     * 
+     * Logic:
+     * 1. If list is empty, print message and return
+     * 2. Traverse to second last node
+     * 3. Update tail to second last node
+     * 4. Set next of second last node to head
+     */
+    public void deleteAtTail()
+    {
+        if (tail == null)
+        {
+            System.out.println("List is empty");
+            return;
+        }
+        ListNode current = head;
+        while (current.getNext() != tail)
+        {
+            current = current.getNext();
+        }
+        tail = current;
+        tail.setNext(head);
+    }
+
+    /**
+     * Deletes the first node in the list.
+     * Time Complexity: O(1)
+     * 
+     * Base cases:
+     * - Empty list: prints message and returns
+     * 
+     * Logic:
+     * 1. If list is empty, print message and return
+     * 2. Update head to next node
+     * 3. Update tail's next pointer to new head
+     */
+    public void deleteAtHead()
+    {
+        if (head == null)
+        {
+            System.out.println("List is empty");
+            return;
+        }
+        head = head.getNext();
+        tail.setNext(head);
+    }
+
+    /**
      * Prints all elements in the list.
      * Time Complexity: O(n)
      * 
@@ -165,7 +217,10 @@ public class CircularLinkedList
         list.insertAtHead(3);
         list.insertAtTail(4);
         list.insertAtTail(5);
-        System.out.println(list.length());
         list.printList();
+        System.out.println(list.length());
+        list.deleteAtTail();
+        list.printList();
+        System.out.println(list.length());
     }
 }
