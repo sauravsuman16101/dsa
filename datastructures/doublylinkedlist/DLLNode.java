@@ -9,6 +9,14 @@ package datastructures.doublylinkedlist;
  * 
  * This class provides the basic building block for creating doubly linked list data structures,
  * allowing bidirectional traversal of the list.
+ * 
+ * Memory Overhead:
+ * Each DLLNode instance has memory overhead for the object itself, plus space for:
+ * - The `data` field (an integer).
+ * - Two references: `next` and `previous`.
+ * The size of references can vary (e.g., 4 or 8 bytes) depending on the JVM 
+ * (Java Virtual Machine) and its configuration (e.g., CompressedOops), 
+ * which in turn affects the overall memory footprint of each node.
  */
 public class DLLNode
 {

@@ -4,6 +4,62 @@ package datastructures.doublylinkedlist;
  * Implementation of a doubly linked list data structure.
  * Each node has references to both next and previous nodes.
  * This class provides methods for basic doubly linked list operations.
+ * 
+ * Memory Overhead:
+ * A DoublyLinkedList with a very large number of nodes (e.g., millions or 
+ * billions) can consume a significant amount of heap memory. This is due to 
+ * the aggregation of the memory overhead from each individual DLLNode, 
+ * each of which includes space for its data and two references (next and previous).
+ * 
+ * GC Pressure:
+ * Frequent creation and deletion of DLLNode objects, especially in lists 
+ * with a very large number of elements or high churn rates (many additions 
+ * and removals), can increase pressure on the garbage collector (GC). 
+ * This is because each node creation allocates memory, and each deletion 
+ * makes an object eligible for garbage collection. High churn can lead to 
+ * more frequent GC cycles and potentially longer GC pauses, which might 
+ * affect application performance.
+ * 
+ * Thread Safety:
+ * This implementation of DoublyLinkedList is NOT thread-safe. 
+ * If multiple threads access and modify this list concurrently (e.g., by calling 
+ * methods like `insertAtHead`, `deleteAtTail`, `insertAtPosition`, etc.), 
+ * it can lead to an inconsistent state, data corruption, or runtime errors. 
+ * For example, concurrent modifications could break the integrity of the links 
+ * between nodes (e.g., `next` and `previous` pointers might not be updated atomically), 
+ * or lead to data races when reading/writing shared fields like `head` and `tail`.
+ * If concurrent access is required, modifications to the list must be synchronized 
+ * externally. This can be achieved by using `synchronized` blocks around the calls 
+ * to the list's methods, or by using a thread-safe collection wrapper such as 
+ * `java.util.Collections.synchronizedList(new LinkedList(...))` if adapting this 
+ * custom list to the standard Java Collections Framework.
+ * 
+ * Scalability Considerations:
+ * While `DoublyLinkedList` is efficient for many common use cases, its inherent 
+ * characteristics—such as memory overhead per node (for data and two references), 
+ * potential GC pressure from high churn rates, O(n) time complexity for positional 
+ * access/modification, and lack of built-in thread safety—can present challenges 
+ * when dealing with an extremely large number of elements (e.g., millions or 
+ * billions) or in highly concurrent environments.
+ * For such scales, consider the following alternatives or strategies:
+ * <ul>
+ *   <li>{@link java.util.ArrayList}: Offers better cache locality and lower memory 
+ *       overhead per element if random access by index is frequent and 
+ *       insertions/deletions are rare or primarily at the end of the list.</li>
+ *   <li>{@link java.util.concurrent.ConcurrentLinkedDeque}: Provides a thread-safe, 
+ *       concurrently accessible linked list implementation suitable for 
+ *       multi-threaded scenarios.</li>
+ *   <li>Database Solutions (e.g., SQL or NoSQL): Essential when data must be 
+ *       persisted, managed transactionally, indexed for efficient querying, or scaled 
+ *       beyond the memory limits of a single Java Virtual Machine (JVM).</li>
+ *   <li>Distributed Data Stores/Systems: Necessary for datasets that exceed the 
+ *       capacity of a single machine or demand exceptionally high availability and 
+ *       fault tolerance.</li>
+ *   <li>Sharding or Pagination: Techniques to manage a logically large list by 
+ *       partitioning data across multiple smaller structures/lists (sharding) or 
+ *       by processing the data in manageable chunks (pagination), even if the 
+ *       underlying data is too extensive for a single monolithic structure.</li>
+ * </ul>
  */
 public class DoublyLinkedList
 {
@@ -62,7 +118,10 @@ public class DoublyLinkedList
 
     /**
      * Inserts a new node at a specific position in the list.
-     * Time Complexity: O(n)
+     * Time Complexity: O(n) in the worst case (e.g., insertion near the end of a long list).
+     * For lists with a very large number of elements, this operation can be slow 
+     * due to the need to traverse a significant portion of the list to find the 
+     * insertion point.
      * 
      * @param data The value to insert
      * @param position The position to insert the new node at (0-based indexing)
@@ -149,7 +208,10 @@ public class DoublyLinkedList
 
     /**
      * Deletes a node at a specific position in the list.
-     * Time Complexity: O(n)
+     * Time Complexity: O(n) in the worst case (e.g., deletion near the end of a long list).
+     * For lists with a very large number of elements, this operation can be slow 
+     * due to the need to traverse a significant portion of the list to find the 
+     * node to be deleted.
      * 
      * @param position The position of the node to delete (0-based indexing)
      * 
